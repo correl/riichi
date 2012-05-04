@@ -60,8 +60,8 @@ nearest_test_() ->
     [?_assertEqual(riichi:nearest(Val, 10), 80) || Val <- lists:seq(71,80)].
 
 score_yaku_limit_test_() ->
-    [?_assertEqual(riichi:score(30, Yaku, true), Score)
-        || {Yaku, Score} <-
+    [?_assertEqual(riichi:score(30, Han, true), Score)
+        || {Han, Score} <-
             [
                 { 5, 2000},
                 { 6, 3000},

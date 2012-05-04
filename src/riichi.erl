@@ -50,21 +50,21 @@ nearest(Num, To) ->
     Num - (Num rem To) + To.
 
 
-score(_Fu, Yaku, Limit) when (Yaku >= 5) and (Limit == true) ->
+score(_Fu, Han, Limit) when (Han >= 5) and (Limit == true) ->
     if
-        Yaku < 6 ->
+        Han < 6 ->
             2000;
-        Yaku < 8 ->
+        Han < 8 ->
             3000;
-        Yaku < 11 ->
+        Han < 11 ->
             4000;
-        Yaku < 14 ->
+        Han < 14 ->
             6000;
         true ->
             8000
     end;
-score(Fu, Yaku, Limit) ->
-    Score = nearest(Fu * round(math:pow(2, 2 + Yaku)), 100),
+score(Fu, Han, Limit) ->
+    Score = nearest(Fu * round(math:pow(2, 2 + Han)), 100),
     if
         Limit and (Score > 2000) ->
             2000;
