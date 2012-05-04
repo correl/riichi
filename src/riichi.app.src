@@ -1,0 +1,12 @@
+{application, riichi,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { riichi_app, []}},
+  {env, []}
+ ]}.

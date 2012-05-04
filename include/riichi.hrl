@@ -1,0 +1,4 @@
+-record(tile, {
+    suit,
+    value
+}).
