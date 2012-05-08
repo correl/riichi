@@ -6,7 +6,10 @@
     is_valid_tile/1,
     dora/1,
     nearest/2,
-    score/3
+    score/3,
+    score_hand/1,
+    score_hand/2,
+    score_hand/3
 ]).
 
 is_valid_tile(#tile{suit=dragon, value=Value}) ->
@@ -71,3 +74,26 @@ score(Fu, Han, Limit) ->
         true ->
             Score
     end.
+
+score_hand(#hand{}=H) ->
+    score_hand(H, 20).
+
+score_hand(#hand{}=H, Fu) ->
+    score_hand(H, Fu, true).
+
+score_hand(#hand{tiles=T, sets=_S}=_H, BaseFu, Limit) ->
+    Fu = [
+        BaseFu
+    ],
+    Han = [
+        _DaiSanGen = case sets:is_subset(sets:from_list([{3, #tile{suit=dragon, value=red}}, {3, #tile{suit=dragon, value=white}}, {3, #tile{suit=dragon, value=green}}]), sets:from_list(find_sets(T))) of
+            true -> 13;
+            _ -> 0
+        end
+    ],
+    score(lists:sum(Fu), lists:sum(Han), Limit).
+
+find_sets(Tiles) ->
+    Unique = sets:to_list(sets:from_list(Tiles)),
+    [{length(lists:filter(fun(X) -> X == T end, Tiles)), T}
+    || T <- Unique].
