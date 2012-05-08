@@ -90,6 +90,18 @@ score_hand_dai_san_gan_test() ->
             lists:duplicate(3, #tile{suit=dragon, value=white}),
             lists:duplicate(3, #tile{suit=dragon, value=green}),
             lists:duplicate(3, #tile{suit=wind, value=east}),
+            [#tile{suit=pin, value=V} || V <- [5,6,7]],
+            lists:duplicate(2, #tile{suit=wind, value=north})])
+    },
+    ?assertEqual(riichi:score_hand(Hand, 30), 8000).
+
+score_hand_suu_an_kou_test() ->
+    Hand = #hand{
+        tiles = lists:flatten([
+            lists:duplicate(3, #tile{suit=pin, value=1}),
+            lists:duplicate(3, #tile{suit=pin, value=4}),
+            lists:duplicate(3, #tile{suit=sou, value=2}),
+            lists:duplicate(3, #tile{suit=man, value=8}),
             lists:duplicate(2, #tile{suit=wind, value=north})])
     },
     ?assertEqual(riichi:score_hand(Hand, 30), 8000).

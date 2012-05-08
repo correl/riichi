@@ -96,6 +96,13 @@ score_hand(#hand{}=Hand, BaseFu, Limit) ->
                     _ -> 0
                 end
         end,
+        _Suu_An_Kou = fun(#hand{}=H) ->
+                Sets = find_sets(H#hand.tiles),
+                case 4 == length([C || {C, _T} <- Sets, C == 3]) of
+                    true -> 13;
+                    _ -> 0
+                end
+        end,
         _Kokushi_Musou = fun(#hand{}=H) ->
                 Sets = find_sets(H#hand.tiles),
                 Terminals = not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, H#hand.tiles),
