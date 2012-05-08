@@ -89,6 +89,10 @@ score_hand(#hand{tiles=T, sets=_S}=_H, BaseFu, Limit) ->
         _DaiSanGen = case sets:is_subset(sets:from_list([{3, #tile{suit=dragon, value=red}}, {3, #tile{suit=dragon, value=white}}, {3, #tile{suit=dragon, value=green}}]), sets:from_list(find_sets(T))) of
             true -> 13;
             _ -> 0
+        end,
+        _Kokushi_Musou = case (lists:flatten([lists:duplicate(12, 1), [2]]) == lists:sort([C || {C, _T} <- find_sets(T)])) and (not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, T)) of
+            true -> 13;
+            _ -> 0
         end
     ],
     score(lists:sum(Fu), lists:sum(Han), Limit).
