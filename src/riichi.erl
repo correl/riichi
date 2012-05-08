@@ -103,6 +103,17 @@ score_hand(#hand{}=Hand, BaseFu, Limit) ->
                     _ -> 0
                 end
         end,
+        _Ryuu_Ii_Sou = fun(#hand{}=H) ->
+                Set = sets:from_list(H#hand.tiles),
+                Greens = sets:from_list(lists:flatten([
+                            [#tile{suit=sou, value=V} || V <- [2,3,4,6,8]],
+                            [#tile{suit=dragon, value=green}]
+                        ])),
+                case sets:is_subset(Set, Greens) of
+                    true -> 13;
+                    _ -> 0
+                end
+        end,
         _Kokushi_Musou = fun(#hand{}=H) ->
                 Sets = find_sets(H#hand.tiles),
                 Terminals = not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, H#hand.tiles),
