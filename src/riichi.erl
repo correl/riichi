@@ -58,7 +58,7 @@ score(_Fu, Han, Limit) when (Han >= 5) and (Limit == true) ->
             3000;
         Han < 11 ->
             4000;
-        Han < 14 ->
+        Han < 13 ->
             6000;
         true ->
             8000
