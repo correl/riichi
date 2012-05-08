@@ -106,14 +106,14 @@ score_hand(#hand{}=Hand, BaseFu, Limit) ->
         _Kokushi_Musou = fun(#hand{}=H) ->
                 Sets = find_sets(H#hand.tiles),
                 Terminals = not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, H#hand.tiles),
-                Orphans = 13 == length([C || {C, _T} <- Sets, C == 1]),
+                Orphans = 12 == length([C || {C, _T} <- Sets, C == 1]),
                 case Terminals and Orphans of
                     true -> 13;
                     _ -> 0
                 end
         end
     ],
-    score(lists:sum(Fu), [F(Hand) || F <- Yakuman], Limit).
+    score(lists:sum(Fu), lists:sum([F(Hand) || F <- Yakuman]), Limit).
 
 find_sets(Tiles) ->
     Unique = sets:to_list(sets:from_list(Tiles)),
