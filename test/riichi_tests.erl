@@ -82,3 +82,14 @@ score_fu_limit_test() ->
 
 score_rounded_test() ->
     ?assertEqual(riichi:score(20, 1, true), 200). % 160 rounded up
+
+score_hand_dai_san_gan_test() ->
+    Hand = #hand{
+        tiles = lists:flatten([
+            lists:duplicate(3, #tile{suit=dragon, value=red}),
+            lists:duplicate(3, #tile{suit=dragon, value=white}),
+            lists:duplicate(3, #tile{suit=dragon, value=green}),
+            lists:duplicate(3, #tile{suit=wind, value=east}),
+            lists:duplicate(2, #tile{suit=wind, value=north})])
+    },
+    ?assertEqual(riichi:score_hand(Hand, 30), 8000).
