@@ -115,3 +115,14 @@ score_hand_kokushi_musou_test() ->
             [#tile{suit=pin, value=1}]])
     },
     ?assertEqual(riichi:score_hand(Hand, 30), 8000).
+
+score_hand_ryuu_ii_sou_test() ->
+    Hand = #hand{
+        tiles = lists:flatten([
+            [#tile{suit=sou, value=V} || V <- [2,3,4]],
+            [#tile{suit=sou, value=V} || V <- [2,3,4]],
+            lists:duplicate(3, #tile{suit=sou, value=6}),
+            lists:duplicate(3, #tile{suit=sou, value=8}),
+            lists:duplicate(2, #tile{suit=dragon, value=green})])
+    },
+    ?assertEqual(riichi:score_hand(Hand, 30), 8000).
