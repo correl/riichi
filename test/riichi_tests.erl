@@ -93,3 +93,13 @@ score_hand_dai_san_gan_test() ->
             lists:duplicate(2, #tile{suit=wind, value=north})])
     },
     ?assertEqual(riichi:score_hand(Hand, 30), 8000).
+
+score_hand_kokushi_musou_test() ->
+    Hand = #hand{
+        tiles = lists:flatten([
+            [#tile{suit=S, value=V} || S <- [pin, sou, man], V <- [1,9]], % Terminals
+            [#tile{suit=wind, value=V} || V <- [east, south, west, north]], % Winds
+            [#tile{suit=dragon, value=V} || V <- [red, white, green]], % Dragons
+            [#tile{suit=pin, value=1}]])
+    },
+    ?assertEqual(riichi:score_hand(Hand, 30), 8000).
