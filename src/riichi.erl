@@ -81,21 +81,32 @@ score_hand(#hand{}=H) ->
 score_hand(#hand{}=H, Fu) ->
     score_hand(H, Fu, true).
 
-score_hand(#hand{tiles=T, sets=_S}=_H, BaseFu, Limit) ->
+score_hand(#hand{}=Hand, BaseFu, Limit) ->
     Fu = [
         BaseFu
     ],
-    Han = [
-        _DaiSanGen = case sets:is_subset(sets:from_list([{3, #tile{suit=dragon, value=red}}, {3, #tile{suit=dragon, value=white}}, {3, #tile{suit=dragon, value=green}}]), sets:from_list(find_sets(T))) of
-            true -> 13;
-            _ -> 0
+    Yakuman = [
+        _DaiSanGen = fun(#hand{}=H) ->
+                Sets = find_sets(H#hand.tiles),
+                HasRed = lists:member({3, #tile{suit=dragon, value=red}}, Sets),
+                HasWhite = lists:member({3, #tile{suit=dragon, value=white}}, Sets),
+                HasGreen = lists:member({3, #tile{suit=dragon, value=green}}, Sets),
+                case HasRed and HasWhite and HasGreen of
+                    true -> 13;
+                    _ -> 0
+                end
         end,
-        _Kokushi_Musou = case (lists:flatten([lists:duplicate(12, 1), [2]]) == lists:sort([C || {C, _T} <- find_sets(T)])) and (not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, T)) of
-            true -> 13;
-            _ -> 0
+        _Kokushi_Musou = fun(#hand{}=H) ->
+                Sets = find_sets(H#hand.tiles),
+                Terminals = not lists:any(fun(#tile{value=V}) -> lists:member(V, lists:seq(2,8)) end, H#hand.tiles),
+                Orphans = 13 == length([C || {C, _T} <- Sets, C == 1]),
+                case Terminals and Orphans of
+                    true -> 13;
+                    _ -> 0
+                end
         end
     ],
-    score(lists:sum(Fu), lists:sum(Han), Limit).
+    score(lists:sum(Fu), [F(Hand) || F <- Yakuman], Limit).
 
 find_sets(Tiles) ->
     Unique = sets:to_list(sets:from_list(Tiles)),
