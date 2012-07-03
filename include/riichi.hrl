@@ -13,3 +13,8 @@
     tile,
     open=true
 }).
+
+-record(seq, {
+    tiles,
+    open=true
+}).
