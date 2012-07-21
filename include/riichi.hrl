@@ -5,7 +5,8 @@
 
 -record(hand, {
     tiles=[],
-    sets=[]
+    sets=[],
+    seqs=[]
 }).
 
 -record(set, {

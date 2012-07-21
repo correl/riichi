@@ -1,43 +1,67 @@
 -module(riichi_hand).
 
--include("riichi.hrl").
+-include("../include/riichi.hrl").
 
 -compile([export_all]).
 
+find(Tiles) ->
+    find(lists:sort(Tiles), #hand{}, []).
 
-find_sets(Tiles) ->
-    Unique = sets:to_list(sets:from_list(Tiles)),
-    [#set{count=length(lists:filter(fun(X) -> X == T end, Tiles)), tile=T, open=false}
-    || T <- Unique].
+find([], Hand, Possible) ->
+    [Hand|Possible];
 
-reorder_seqs(Tiles) ->
-    Unique = sets:to_list(sets:from_list(Tiles)),
-    lists:sort(Unique) ++ (Tiles -- Unique).
+find(Tiles, Hand = #hand{tiles=HT, sets=HS}, Possible) ->
+    case Tiles of
+        [T, T, T, T|Rest] ->
+            find(Rest, Hand#hand{sets=[#set{count=4, tile=T, open=false}|HS]}, Possible);
+        _ -> []
+    end ++
+    case Tiles of
+        [T, T, T|Rest] ->
+            find(Rest, Hand#hand{sets=[#set{count=3, tile=T, open=false}|HS]}, Possible);
+        _ ->
+            []
+    end ++
+    case Tiles of
+        [T, T|Rest] ->
+            find(Rest, Hand#hand{sets=[#set{count=2, tile=T, open=false}|HS]}, Possible);
+        _ ->
+            []
+    end ++
+    case lists:sort(sets:to_list(sets:from_list(Tiles))) of
+        [T1 = #tile{value=V1, suit=S}, T2 = #tile{value=V2, suit=S}, T3 = #tile{value=V3, suit=S}|_] when
+              is_integer(V1) andalso
+              [V1, V2, V3] =:= [V1, V1 + 1, V1 + 2] ->
+            find(Tiles -- [T1, T2, T3], Hand#hand{sets=[#seq{tiles=[T1, T2, T3], open=false}|HS]}, Possible);
+        _ ->
+            []
+    end ++
+    case Tiles of
+        [T|Rest] ->
+            find(Rest, Hand#hand{tiles=[T|HT]}, Possible)
+    end.
 
-find_seqs(Tiles) ->
-    find_seqs(reorder_seqs(Tiles), {[], []}).
+is_complete(#hand{tiles=[], sets=Sets}) ->
+    Pairs = [S || S <- Sets, S#set.count =:= 2],
+    case length(Pairs) of
+        1 ->
+            % Four mentsu + 1 pair = 5 sets
+            length(Sets) =:= 5;
+        7 ->
+            % Must be seven *unique* pairs
+            sets:size(sets:from_list(Pairs)) =:= 7;
+        _ ->
+            false
+    end;
+is_complete(#hand{}=Hand) ->
+    kokushi_musou(Hand).
 
-find_seqs([], {Seqs, Rest}) ->
-    {lists:sort(Seqs), lists:sort(Rest)};
-
-find_seqs([T1 = #tile{suit=Suit}, T2 = #tile{suit=Suit}, T3  = #tile{suit=Suit} | Tiles], {Seqs, Rest})
-        when T2#tile.value =:= (T1#tile.value + 1)
-             andalso T3#tile.value =:= (T2#tile.value + 1) ->
-    find_seqs(reorder_seqs(Tiles), {[#seq{tiles=[T1, T2, T3], open=false} | Seqs], Rest});
-
-find_seqs([T | Tiles], {Seqs, Rest}) ->
-    find_seqs(Tiles, {Seqs, [T | Rest]}).
-
-perms([]) -> [[]];
-perms(L)  -> [[H|T] || H <- L, T <- perms(L--[H])].
-
-combinations(0, _) -> [[]];
-combinations(_, []) -> [];
-combinations(N, [X|XS]) -> [[X|YS] || YS <- combinations(N-1, XS)] ++ combinations(N, XS).
-
-find_hands(Tiles) ->
-    find_hands(Tiles, []).
-find_hands([], Hands) ->
-    Hands;
-find_hands([_T | _Remaining] = Tiles, Hands) ->
-    [#hand{tiles=Tiles} | Hands].
+% 13 Orphans
+kokushi_musou(#hand{tiles=Tiles, sets=Sets}) when
+      length(Tiles) =:= 13
+      andalso length(Sets) =:= 0 ->
+    not lists:any(fun(#tile{value=V}) ->
+                          lists:member(V, lists:seq(2,8))
+                  end,
+                  Tiles)
+        andalso sets:size(sets:from_list(Tiles)) =:= 13.
