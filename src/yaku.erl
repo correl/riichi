@@ -5,21 +5,23 @@
 -compile([export_all]).
 
 
-yakuhai(#hand{sets=Sets}) ->
-    length(lists:filter(fun(T = #tile{}) ->
-                                case T#tile.suit of
-                                    wind ->
+yakuhai(#hand{melds=Melds}) ->
+    length(lists:filter(fun(#meld{type=Type, tiles=[T|_]}) ->
+                                case {Type, T} of
+                                    {pair, _} ->
+                                        false;
+                                    {chii, _} ->
+                                        false;
+                                    {_, #tile{suit=wind}} ->
                                         % TODO: Round/Seat Winds
                                         false;
-                                    dragon ->
-                                        true;
-                                    _ ->
-                                        false
+                                    {_, #tile{suit=dragon}} ->
+                                        true
                                 end
                         end,
-                        Sets)).
+                        Melds)).
 
-tanyao(#hand{sets=Sets}) ->
+tanyao(#hand{melds=Melds}) ->
     not lists:any(fun(T = #tile{}) ->
                           case T#tile.suit of
                               dragon ->
@@ -30,32 +32,22 @@ tanyao(#hand{sets=Sets}) ->
                                   lists:member(T#tile.value, [1,9])
                           end
                   end,
-                  Sets).
+                  lists:flatten([Tiles || #meld{tiles=Tiles} <- Melds])).
 
-pinfu(#hand{sets=Sets}) ->
+pinfu(#hand{melds=Melds}) ->
     % TODO: Verify closed, open wait, pair not round/seat wind
-    lists:all(fun(S) ->
-                      case S of
-                          #seq{} ->
-                              true;
-                          _ ->
-                              false
-                      end
-              end,
-              [S || S <- Sets]).
+    length([M || M = #meld{type=T} <- Melds, T =:= chii]) =:= 4.
 
 % 7 Pairs
-chiitoitsu(#hand{tiles=[], sets=Sets})
-  when length(Sets) =:= 7 ->
-    Pairs = [S || S <- Sets, S#set.count =:= 2],
+chiitoitsu(#hand{tiles=[], melds=Melds})
+  when length(Melds) =:= 7 ->
+    Pairs = [S || S <- Melds, S#meld.type =:= pair],
     length(Pairs) =:= 7 andalso sets:size(sets:from_list(Pairs)) =:= 7.
 
 % 13 Orphans
-kokushi_musou(#hand{tiles=Tiles, sets=Sets})
-  when length(Tiles) =:= 13
-       andalso length(Sets) =:= 0 ->
+kokushi_musou(#hand{tiles=Tiles, melds=[#meld{type=pair, tiles=[T,T]}]}) ->
     not lists:any(fun(#tile{value=V}) ->
                           lists:member(V, lists:seq(2,8))
                   end,
-                  Tiles)
-        andalso sets:size(sets:from_list(Tiles)) =:= 13.
+                  [T|Tiles])
+        andalso sets:size(sets:from_list([T|Tiles])) =:= 13.
