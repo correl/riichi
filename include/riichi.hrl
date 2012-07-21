@@ -1,21 +1,21 @@
+-type wind()   :: east | south | west | north.
+-type dragon() :: green | red | white.
+
 -record(tile, {
-    suit,
-    value
+          suit       :: pin | man | sou | wind | dragon,
+          value      :: integer() | wind() | dragon(),
+          from=draw  :: draw | wind()
 }).
+-type tile() :: #tile{}.
+
+-record(meld, {
+          type  :: pair | chii | pon | kan,
+          tiles :: [tile()]
+}).
+-type meld() :: #meld{}.
 
 -record(hand, {
-    tiles=[],
-    sets=[],
-    seqs=[]
+          tiles=[] :: [tile()],
+          melds=[] :: [meld()]
 }).
-
--record(set, {
-    count,
-    tile,
-    open=true
-}).
-
--record(seq, {
-    tiles,
-    open=true
-}).
+-type hand() :: #hand{}.
