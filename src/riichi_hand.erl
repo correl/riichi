@@ -36,7 +36,7 @@ find(Tiles, Hand = #hand{tiles=HT, melds=HM}, Possible) ->
             find(Rest, Hand#hand{tiles=[T|HT]}, Possible)
     end.
 
-is_complete(#hand{tiles=[], melds=Melds}) ->
+is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
     Pairs = [M || M <- Melds, M#meld.type =:= pair],
     case length(Pairs) of
         1 ->
@@ -44,19 +44,12 @@ is_complete(#hand{tiles=[], melds=Melds}) ->
             length(Melds) =:= 5;
         7 ->
             % Must be seven *unique* pairs
-            sets:size(sets:from_list(Pairs)) =:= 7;
+            yaku:chiitoitsu(Hand);
         _ ->
             false
     end;
 is_complete(#hand{}=Hand) ->
-    kokushi_musou(Hand).
+    yaku:kokushi_musou(Hand).
 
-% 13 Orphans
-kokushi_musou(#hand{tiles=Tiles, melds=Melds}) when
-      length(Tiles) =:= 13
-      andalso length(Melds) =:= 0 ->
-    not lists:any(fun(#tile{value=V}) ->
-                          lists:member(V, lists:seq(2,8))
-                  end,
-                  Tiles)
-        andalso sets:size(sets:from_list(Tiles)) =:= 13.
+km() ->
+    [#tile{suit=pin, value=1}|?TERMINALS ++ ?HONOURS].
