@@ -50,4 +50,6 @@ kokushi_musou(#hand{tiles=Tiles, melds=[#meld{type=pair, tiles=[T,T]}]}) ->
                           lists:member(V, lists:seq(2,8))
                   end,
                   [T|Tiles])
-        andalso sets:size(sets:from_list([T|Tiles])) =:= 13.
+        andalso sets:size(sets:from_list([T|Tiles])) =:= 13;
+kokushi_musou(#hand{}) ->
+    false.
