@@ -1,15 +1,17 @@
 -module(riichi).
 
--include("riichi.hrl").
+-include("../include/riichi.hrl").
 
 -export([
-    is_valid_tile/1,
-    dora/1,
-    nearest/2,
-    score/3,
-    score_hand/1,
-    score_hand/2,
-    score_hand/3
+         is_valid_tile/1,
+         dora/1,
+         nearest/2,
+         score/3,
+         score_hand/1,
+         score_hand/2,
+         score_hand/3,
+         shuffle/1,
+         tiles/0
 ]).
 
 is_valid_tile(#tile{suit=dragon, value=Value}) ->
@@ -130,3 +132,9 @@ find_sets(Tiles) ->
     Unique = sets:to_list(sets:from_list(Tiles)),
     [{length(lists:filter(fun(X) -> X == T end, Tiles)), T}
     || T <- Unique].
+
+shuffle(List) ->
+    [X || {_, X} <- lists:sort([{random:uniform(), I} || I <- List])].
+
+tiles() ->
+    lists:flatten([lists:duplicate(4, T) || T <- ?TILES]).
