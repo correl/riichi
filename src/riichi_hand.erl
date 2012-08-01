@@ -61,6 +61,3 @@ is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
     end;
 is_complete(#hand{}=Hand) ->
     yaku:kokushi_musou(Hand).
-
-km() ->
-    [#tile{suit=pin, value=1}|?TERMINALS ++ ?HONOURS].
