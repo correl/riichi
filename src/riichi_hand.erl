@@ -4,6 +4,9 @@
 
 -compile([export_all]).
 
+find(#hand{} = Hand) ->
+    %find(lists:sort(Tiles), Hand#hand{tiles=[]}, []);
+    find(lists:sort(tiles(Hand)));
 find(Tiles) ->
     find(lists:sort(Tiles), #hand{}, []).
 
@@ -55,9 +58,14 @@ is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
             length(Melds) =:= 5;
         7 ->
             % Must be seven *unique* pairs
-            yaku:chiitoitsu(Hand);
+            yaku:chiitoitsu(#game{}, #player{hand=Hand});
         _ ->
             false
     end;
 is_complete(#hand{}=Hand) ->
-    yaku:kokushi_musou(Hand).
+    yaku:kokushi_musou(#game{}, #player{hand=Hand}).
+
+waits(#hand{}=Hand) ->
+    [T || T <- ?TILES,
+          0 < length([H || H <- find(tiles(Hand) ++ [T]),
+                           is_complete(H)])].
