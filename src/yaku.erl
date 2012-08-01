@@ -40,15 +40,15 @@ tanyao(#game{}, #player{hand=Hand}) ->
                   end,
                   riichi_hand:tiles(Hand)).
 
-pinfu(#game{round=Round}, #player{seat=Seat, hand=Hand=#hand{melds=Melds}}) ->
-    % TODO: Verify closed, open wait, and pair not round/seat wind
+pinfu(#game{round=Round}, #player{seat=Seat, hand=Hand=#hand{melds=Melds}, drawn={_, Drawn}}) ->
     Closed = lists:all(fun(T) -> T#tile.from =:= draw end, riichi_hand:tiles(Hand)),
+    OpenWait = length(riichi_hand:waits(#hand{tiles=riichi_hand:tiles(Hand) -- [Drawn]})) > 1,
     Chiis = length([M || M = #meld{type=chii} <- Melds]) =:= 4,
     #meld{type=pair, tiles=[HeadTile,HeadTile]} = riichi_hand:head(Hand),
     NonValuePair = HeadTile#tile.value =/= Round
         andalso HeadTile#tile.value =/= Seat
         andalso HeadTile#tile.suit =/= dragon,
-    Closed and Chiis and NonValuePair.
+    Closed and OpenWait and Chiis and NonValuePair.
 
 % 7 Pairs
 chiitoitsu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}})
