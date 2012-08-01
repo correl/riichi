@@ -1,15 +1,26 @@
+%% @author Correl Roush <correl@gmail.com>
+%%
+%% @doc Riichi Mahjong library.
+
 -module(riichi_hand).
 
 -include("../include/riichi.hrl").
 
--compile([export_all]).
+-export([find/1,
+         tiles/1,
+         head/1,
+         is_complete/1,
+         waits/1]).
 
+-spec find
+              (hand()) -> [hand()];
+              ([tile()]) -> [hand()].
 find(#hand{} = Hand) ->
-    %find(lists:sort(Tiles), Hand#hand{tiles=[]}, []);
     find(lists:sort(tiles(Hand)));
 find(Tiles) ->
     find(lists:sort(Tiles), #hand{}, []).
 
+-spec find([tile()], hand(), [hand()]) -> [hand()].
 find([], Hand, Possible) ->
     [Hand|Possible];
 
@@ -39,9 +50,11 @@ find(Tiles, Hand = #hand{tiles=HT, melds=HM}, Possible) ->
             find(Rest, Hand#hand{tiles=[T|HT]}, Possible)
     end.
 
+-spec tiles(hand()) -> [tile()].
 tiles(#hand{tiles=Tiles, melds=Melds}) ->
     lists:flatten([TS || #meld{tiles=TS} <- Melds]) ++ Tiles.
 
+-spec head(hand()) -> meld() | none.
 head(#hand{melds=Melds}) ->
     case [M || M = #meld{type=pair} <- Melds] of
         [Pair|_] ->
@@ -50,6 +63,7 @@ head(#hand{melds=Melds}) ->
             none
     end.
 
+-spec is_complete(hand()) -> boolean().
 is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
     Pairs = [M || M <- Melds, M#meld.type =:= pair],
     case length(Pairs) of
@@ -65,6 +79,7 @@ is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
 is_complete(#hand{}=Hand) ->
     yaku:kokushi_musou(#game{}, #player{hand=Hand}).
 
+-spec waits(hand()) -> [tile()].
 waits(#hand{}=Hand) ->
     [T || T <- ?TILES,
           0 < length([H || H <- find(tiles(Hand) ++ [T]),

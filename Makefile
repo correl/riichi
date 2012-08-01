@@ -4,6 +4,8 @@ REBAR=./rebar
 
 all: deps compile
 
+docs:
+	@$(REBAR) doc
 deps:
 	@$(REBAR) get-deps
 compile: deps

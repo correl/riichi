@@ -1,3 +1,7 @@
+%% @author Correl Roush <correl@gmail.com>
+%%
+%% @doc Riichi Mahjong library.
+
 -module(riichi).
 
 -include("../include/riichi.hrl").
@@ -14,6 +18,7 @@
          tiles/0
 ]).
 
+-spec is_valid_tile(tile()) -> boolean().
 is_valid_tile(#tile{suit=dragon, value=Value}) ->
     lists:member(Value, [white, green, red]);
 is_valid_tile(#tile{suit=wind, value=Value}) ->
@@ -25,6 +30,7 @@ is_valid_tile(#tile{suit=Suit, value=Value}) ->
 is_valid_tile(_) ->
     false.
 
+-spec dora(tile()) -> tile().
 dora(#tile{suit=dragon, value=Value}=Indicator) ->
     case Value of
         white -> Indicator#tile{value=green};
@@ -49,12 +55,13 @@ dora(#tile{value=Value}=Indicator) ->
             end
     end.
 
+-spec nearest(integer(), integer()) -> integer().
 nearest(Num, To) when Num rem To == 0 ->
     Num;
 nearest(Num, To) ->
     Num - (Num rem To) + To.
 
-
+-spec score(integer(), integer(), boolean()) -> integer().
 score(_Fu, Han, Limit) when (Han >= 5) and (Limit == true) ->
     if
         Han < 6 ->
@@ -77,12 +84,14 @@ score(Fu, Han, Limit) ->
             Score
     end.
 
+-spec score_hand(hand()) -> integer().
 score_hand(#hand{}=H) ->
     score_hand(H, 20).
 
 score_hand(#hand{}=H, Fu) ->
     score_hand(H, Fu, true).
 
+-spec score_hand(hand(), integer(), boolean()) -> integer().
 score_hand(#hand{}=Hand, BaseFu, Limit) ->
     Fu = [
         BaseFu
@@ -128,13 +137,16 @@ score_hand(#hand{}=Hand, BaseFu, Limit) ->
     ],
     score(lists:sum(Fu), lists:sum([F(Hand) || F <- Yakuman]), Limit).
 
+-spec find_sets([tile()]) -> [{integer(), tile()}].
 find_sets(Tiles) ->
     Unique = sets:to_list(sets:from_list(Tiles)),
     [{length(lists:filter(fun(X) -> X == T end, Tiles)), T}
     || T <- Unique].
 
+-spec shuffle(list()) -> list().
 shuffle(List) ->
     [X || {_, X} <- lists:sort([{random:uniform(), I} || I <- List])].
 
+-spec tiles() -> [string()].
 tiles() ->
     lists:flatten([lists:duplicate(4, T) || T <- ?TILES]).

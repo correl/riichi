@@ -6,6 +6,7 @@
 -define(TILES, ?SIMPLES ++ ?TERMINALS ++ ?HONOURS).
 
 -type wind()   :: east | south | west | north.
+
 -type dragon() :: green | red | white.
 
 -record(tile, {
@@ -50,3 +51,4 @@
           uradora          :: [tile()],
           players          :: [player()]
 }).
+-type game() :: #game{}.
