@@ -44,3 +44,11 @@ kokushi_musou_test() ->
     Hand = #hand{tiles=?TERMINALS ++ ?HONOURS -- [#tile{suit=pin, value=1}],
                 melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=1})}]},
     ?assertEqual(true, yaku:kokushi_musou(#game{}, #player{hand=Hand})).
+
+ryuu_iisou_test() ->
+    Hand = #hand{melds=[#meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [2,3,4]]},
+                        #meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [2,3,4]]},
+                        #meld{type=pon, tiles=lists:duplicate(3, #tile{suit=sou, value=6})},
+                        #meld{type=pon, tiles=lists:duplicate(3, #tile{suit=sou, value=8})},
+                        #meld{type=pair, tiles=lists:duplicate(2, #tile{suit=dragon, value=green})}]},
+    ?assert(yaku:ryuu_iisou(#game{}, #player{hand=Hand})).
