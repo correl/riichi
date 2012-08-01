@@ -1,6 +1,8 @@
 %% @author Correl Roush <correl@gmail.com>
 %%
 %% @doc Riichi Mahjong library.
+%%
+%% @headerfile "../include/riichi.hrl"
 
 -module(yaku).
 
