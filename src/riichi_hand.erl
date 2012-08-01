@@ -36,6 +36,17 @@ find(Tiles, Hand = #hand{tiles=HT, melds=HM}, Possible) ->
             find(Rest, Hand#hand{tiles=[T|HT]}, Possible)
     end.
 
+tiles(#hand{tiles=Tiles, melds=Melds}) ->
+    lists:flatten([TS || #meld{tiles=TS} <- Melds]) ++ Tiles.
+
+head(#hand{melds=Melds}) ->
+    case [M || M = #meld{type=pair} <- Melds] of
+        [Pair|_] ->
+            Pair;
+        [] ->
+            none
+    end.
+
 is_complete(#hand{tiles=[], melds=Melds}=Hand) ->
     Pairs = [M || M <- Melds, M#meld.type =:= pair],
     case length(Pairs) of
