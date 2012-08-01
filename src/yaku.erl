@@ -13,7 +13,8 @@
         pinfu/2,
         chiitoitsu/2,
         kokushi_musou/2,
-        ryuu_iisou/2]).
+        ryuu_iisou/2,
+        dai_san_gen/2]).
 
 %% @doc Counts the pons/kans of value tiles in a player's hand.
 %%      Value tiles include all of the dragons, plus the round wind and the player's seat wind.
@@ -92,3 +93,9 @@ ryuu_iisou(#game{}, #player{hand=Hand}) ->
     Greens = sets:from_list([#tile{suit=sou, value=V} || V <- [2,3,4,6,8]] ++ [#tile{suit=dragon, value=green}]),
     Tiles = sets:from_list(riichi_hand:tiles(Hand)),
     sets:is_subset(Tiles, Greens).
+
+%% @doc Returns true for a Big Three Dragons hand
+-spec dai_san_gen(game(), player()) -> boolean().
+dai_san_gen(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    [green, red, white] =:= lists:usort([V || #meld{type=T, tiles=[#tile{suit=dragon, value=V}|_]} <- Melds,
+                                              lists:member(T, [pon, kan])]).

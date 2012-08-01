@@ -52,3 +52,11 @@ ryuu_iisou_test() ->
                         #meld{type=pon, tiles=lists:duplicate(3, #tile{suit=sou, value=8})},
                         #meld{type=pair, tiles=lists:duplicate(2, #tile{suit=dragon, value=green})}]},
     ?assert(yaku:ryuu_iisou(#game{}, #player{hand=Hand})).
+
+dai_san_gen_test() ->
+    Hand = #hand{melds=[#meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [2,3,4]]},
+                        #meld{type=pon, tiles=lists:duplicate(3, #tile{suit=dragon, value=red})},
+                        #meld{type=pon, tiles=lists:duplicate(3, #tile{suit=dragon, value=green})},
+                        #meld{type=kan, tiles=lists:duplicate(4, #tile{suit=dragon, value=white})},
+                        #meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=1})}]},
+    ?assert(yaku:dai_san_gen(#game{}, #player{hand=Hand})).
