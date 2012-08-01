@@ -12,7 +12,8 @@
         tanyao/2,
         pinfu/2,
         chiitoitsu/2,
-        kokushi_musou/2]).
+        kokushi_musou/2,
+        ryuu_iisou/2]).
 
 %% @doc Counts the pons/kans of value tiles in a player's hand.
 %%      Value tiles include all of the dragons, plus the round wind and the player's seat wind.
@@ -84,3 +85,10 @@ kokushi_musou(#game{}, #player{hand=#hand{tiles=Tiles, melds=[#meld{type=pair, t
         andalso sets:size(sets:from_list([T|Tiles])) =:= 13;
 kokushi_musou(#game{}, #player{}) ->
     false.
+
+%% @doc Returns true for an all-green hand.
+-spec ryuu_iisou(game(), player()) -> boolean().
+ryuu_iisou(#game{}, #player{hand=Hand}) ->
+    Greens = sets:from_list([#tile{suit=sou, value=V} || V <- [2,3,4,6,8]] ++ [#tile{suit=dragon, value=green}]),
+    Tiles = sets:from_list(riichi_hand:tiles(Hand)),
+    sets:is_subset(Tiles, Greens).
