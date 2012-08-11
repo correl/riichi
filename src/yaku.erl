@@ -12,6 +12,7 @@
          tanyao/2,
          pinfu/2,
          iipeikou/2,
+         chanta/2,
          chiitoitsu/2,
          kokushi_musou/2,
          ryuu_iisou/2,
@@ -86,6 +87,18 @@ iipeikou(#game{}, #player{hand=#hand{melds=Melds}}) ->
     Chiis = [M || M = #meld{type=chii} <- Melds],
     Counts = [C || {_, C} <- count_unique(Chiis)],
     lists:max(Counts) > 1 andalso lists:max(Counts) < 4.
+
+%% @doc Returns true for a Chanta hand
+%%      All melds and the pair must include a terminal or honor tile
+-spec chanta(game(), player()) -> boolean().
+chanta(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
+    Sets = [[{T#tile.suit, T#tile.value} || T <- Tiles]
+            || #meld{tiles=Tiles} <- Melds],
+    ChantaTiles = [{T#tile.suit, T#tile.value} || T <- (?TERMINALS ++ ?HONOURS)],
+    lists:all(fun(Tiles) ->
+                      (Tiles -- ChantaTiles =/= Tiles)
+              end,
+              Sets).
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
