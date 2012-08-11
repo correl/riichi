@@ -9,12 +9,13 @@
 -include("../include/riichi.hrl").
 
 -export([yakuhai/2,
-        tanyao/2,
-        pinfu/2,
-        chiitoitsu/2,
-        kokushi_musou/2,
-        ryuu_iisou/2,
-        dai_san_gen/2]).
+         tanyao/2,
+         pinfu/2,
+         iipeikou/2,
+         chiitoitsu/2,
+         kokushi_musou/2,
+         ryuu_iisou/2,
+         dai_san_gen/2]).
 
 %% @doc Counts the pons/kans of value tiles in a player's hand.
 %%      Value tiles include all of the dragons, plus the round wind and the player's seat wind.
@@ -66,6 +67,25 @@ pinfu(#game{round=Round}, #player{seat=Seat, hand=Hand=#hand{melds=Melds}, drawn
         andalso HeadTile#tile.value =/= Seat
         andalso HeadTile#tile.suit =/= dragon,
     Closed and OpenWait and Chiis and NonValuePair.
+
+%% @doc Counts unique elements in a list
+-spec count_unique(list()) -> list({term(), integer()}).
+count_unique(L) ->
+    Unique = sets:to_list(sets:from_list(L)),
+    [{I, length(lists:filter(fun (X) ->
+                                     X == I
+                             end,
+                             L))}
+     || I <- Unique].
+
+%% @doc Returns true for a hand containing two identical straights in the same suit
+%%      Will NOT return true if there are more than two, as this yaku and ryanpeikou
+%%      are mutually exclusive.
+-spec iipeikou(game(), player()) -> boolean().
+iipeikou(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Chiis = [M || M = #meld{type=chii} <- Melds],
+    Counts = [C || {_, C} <- count_unique(Chiis)],
+    lists:max(Counts) > 1 andalso lists:max(Counts) < 4.
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().

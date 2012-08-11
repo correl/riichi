@@ -36,6 +36,14 @@ pinfu_test() ->
                         #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [6,7,8]]}]},
     ?assertEqual(true, yaku:pinfu(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=sou, value=6}}})).
 
+iipeikou_test() ->
+    Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=sou, value=8})},
+                        #meld{type=chii, tiles=[#tile{suit=pin, value=V} || V <- [1,2,3]]},
+                        #meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [4,5,6]]},
+                        #meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [4,5,6]]},
+                        #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [6,7,8]]}]},
+    ?assertEqual(true, yaku:iipeikou(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=sou, value=6}}})).
+
 chiitoitsu_test() ->
     Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=V})} || V <- lists:seq(1,7)]},
     ?assertEqual(true, yaku:chiitoitsu(#game{}, #player{hand=Hand})).
