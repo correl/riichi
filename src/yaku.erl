@@ -13,6 +13,7 @@
          pinfu/2,
          iipeikou/2,
          chanta/2,
+         itsuu/2,
          chiitoitsu/2,
          kokushi_musou/2,
          ryuu_iisou/2,
@@ -100,6 +101,18 @@ chanta(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
               end,
               Sets).
 
+%% @doc Returns true for an Itsuu hand
+%%      Hand must contain a 1-9 run in one suit
+-spec itsuu(game(), player()) -> boolean().
+itsuu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
+    Tiles = lists:flatten([TS || #meld{type=chii, tiles=TS} <- Melds]),
+    Runs = [lists:filter(fun(#tile{suit=S, value=V}) -> S =:= Suit end, Tiles)
+            || Suit <- [man,sou,pin]],
+    lists:any(fun(TS) ->
+                      sets:from_list([V || #tile{value=V} <- TS]) =:= sets:from_list(lists:seq(1,9))
+              end,
+              Runs).
+    
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
 chiitoitsu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}})
