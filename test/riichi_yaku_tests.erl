@@ -60,6 +60,14 @@ itsuu_test() ->
                         #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [6,7,8]]}]},
     ?assertEqual(true, yaku:itsuu(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=dragon, value=red}}})).
 
+san_shoku_doujun_test() ->
+    Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=sou, value=8})},
+                        #meld{type=chii, tiles=[#tile{suit=sou, value=V} || V <- [1,2,3]]},
+                        #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [1,2,3]]},
+                        #meld{type=chii, tiles=[#tile{suit=pin, value=V} || V <- [1,2,3]]},
+                        #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [6,7,8]]}]},
+    ?assertEqual(true, yaku:san_shoku_doujun(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=dragon, value=red}}})).
+
 chiitoitsu_test() ->
     Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=V})} || V <- lists:seq(1,7)]},
     ?assertEqual(true, yaku:chiitoitsu(#game{}, #player{hand=Hand})).

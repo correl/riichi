@@ -15,6 +15,7 @@
          chanta/2,
          itsuu/2,
          chiitoitsu/2,
+         san_shoku_doujun/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -112,7 +113,25 @@ itsuu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
                       sets:from_list([V || #tile{value=V} <- TS]) =:= sets:from_list(lists:seq(1,9))
               end,
               Runs).
-    
+%% @doc Returns true if the provided meld is present in the hand
+%%      in all three suits
+-spec san_shoku(meld(), hand()) -> boolean().
+san_shoku(#meld{tiles=Tiles}, #hand{melds=Melds}) ->
+    [V1, V2, V3] = [V || #tile{value=V} <- Tiles],
+    MeldTiles = [TS || #meld{tiles=TS} <- Melds],
+    TSV = fun(#tile{suit=S,value=V}) -> {S,V} end,
+    MeldValues = lists:map(fun(L) -> lists:map(TSV, L) end, MeldTiles),
+    lists:all(fun(M) -> lists:member(M, MeldValues) end,
+              [[{S, V1}, {S, V2}, {S, V3}]
+               || S <- [pin, sou, man]]).
+
+%% @doc Returns true for a San shoku doujun hand
+%%      Hand must contain the same sequence in all three suits
+-spec san_shoku_doujun(game(), player()) -> boolean().
+san_shoku_doujun(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
+    Chiis = [M || #meld{type=chii} = M <- Melds],
+    lists:any(fun(M) -> san_shoku(M, Hand) end, Chiis).
+
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
 chiitoitsu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}})
