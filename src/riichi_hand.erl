@@ -52,9 +52,11 @@ find(Tiles, Hand = #hand{tiles=HT, melds=HM}, Possible) ->
             find(Rest, Hand#hand{tiles=[T|HT]}, Possible)
     end.
 
--spec tiles(hand()) -> [tile()].
+-spec tiles(hand() | meld()) -> [tile()].
 tiles(#hand{tiles=Tiles, melds=Melds}) ->
-    lists:flatten([TS || #meld{tiles=TS} <- Melds]) ++ Tiles.
+    lists:flatten([TS || #meld{tiles=TS} <- Melds]) ++ Tiles;
+tiles(#meld{tiles=Tiles}) ->
+    Tiles.
 
 -spec head(hand()) -> meld() | none.
 head(#hand{melds=Melds}) ->
