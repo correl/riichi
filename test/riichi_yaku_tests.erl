@@ -92,6 +92,13 @@ toi_toi_test() ->
                         #meld{type=pon, tiles=[#tile{suit=pin, value=V} || V <- [8,8,8]]}]},
     ?assertEqual(true, yaku:toi_toi(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=dragon, value=red}}})).
     
+san_an_kou_test() ->
+    Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=sou, value=8})},
+                        #meld{type=kan, tiles=[#tile{suit=sou, value=V} || V <- [1,1,1,1]]},
+                        #meld{type=kan, tiles=[#tile{suit=man, value=V} || V <- [1,1,1,1]]},
+                        #meld{type=pon, tiles=[#tile{suit=pin, value=V} || V <- [1,1,1]]},
+                        #meld{type=chii, tiles=[#tile{suit=man, value=V} || V <- [6,7,8]]}]},
+    ?assertEqual(true, yaku:san_an_kou(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=dragon, value=red}}})).
 
 chiitoitsu_test() ->
     Hand = #hand{melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=V})} || V <- lists:seq(1,7)]},

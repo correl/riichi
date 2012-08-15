@@ -10,6 +10,7 @@
 
 -export([
          is_valid_tile/1,
+         is_open/1,
          dora/1,
          nearest/2,
          score/3,
@@ -31,6 +32,17 @@ is_valid_tile(#tile{suit=Suit, value=Value}) ->
     ValidSuit and ValidValue;
 is_valid_tile(_) ->
     false.
+
+-spec is_open(hand() | meld() | tile()) -> boolean().
+is_open(#tile{from=draw}) ->
+    false;
+is_open(#tile{}) ->
+    true;
+is_open(#meld{tiles=Tiles}) ->
+    lists:any(fun is_open/1, Tiles);
+is_open(#hand{tiles=Tiles, melds=Melds}) ->
+    lists:any(fun is_open/1, Tiles)
+        orelse lists:any(fun is_open/1, Melds).
 
 -spec dora(tile()) -> tile().
 dora(#tile{suit=dragon, value=Value}=Indicator) ->

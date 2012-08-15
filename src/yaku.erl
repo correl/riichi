@@ -19,6 +19,7 @@
          san_shoku_douko/2,
          san_kan_tsu/2,
          toi_toi/2,
+         san_an_kou/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -154,6 +155,14 @@ toi_toi(#game{}, #player{hand=#hand{melds=Melds}}) ->
     Pons = [M || M = #meld{type=T} <- Melds,
                   lists:member(T, [pon,kan])],
     length(Pons) =:= 4.
+
+%% @doc Returns true for a San an kou hand
+%%      Hand must contain three concealed triplets
+san_an_kou(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    ClosedPons = [M || M = #meld{type=T} <- Melds,
+                       not riichi:is_open(M),
+                       lists:member(T, [pon,kan])],
+    length(ClosedPons) =:= 3.
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
