@@ -17,6 +17,7 @@
          chiitoitsu/2,
          san_shoku_doujun/2,
          san_shoku_douko/2,
+         san_kan_tsu/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -139,6 +140,12 @@ san_shoku_doujun(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
 san_shoku_douko(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
     Pons = [M || #meld{type=pon} = M <- Melds],
     lists:any(fun(M) -> san_shoku(M, Hand) end, Pons).
+
+%% @doc Returns true for a San kan tsu hand
+%%      Hand must contain three kans
+san_kan_tsu(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Kans = [M || M = #meld{type=kan} <- Melds],
+    length(Kans) =:= 3.
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
