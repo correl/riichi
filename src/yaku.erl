@@ -18,6 +18,7 @@
          san_shoku_doujun/2,
          san_shoku_douko/2,
          san_kan_tsu/2,
+         toi_toi/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -146,6 +147,13 @@ san_shoku_douko(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
 san_kan_tsu(#game{}, #player{hand=#hand{melds=Melds}}) ->
     Kans = [M || M = #meld{type=kan} <- Melds],
     length(Kans) =:= 3.
+
+%% @doc Returns true for a Toi toi hand
+%%      Hand must contain all triplets
+toi_toi(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Pons = [M || M = #meld{type=T} <- Melds,
+                  lists:member(T, [pon,kan])],
+    length(Pons) =:= 4.
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
