@@ -16,6 +16,7 @@
          itsuu/2,
          chiitoitsu/2,
          san_shoku_doujun/2,
+         san_shoku_douko/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -131,6 +132,13 @@ san_shoku(#meld{tiles=Tiles}, #hand{melds=Melds}) ->
 san_shoku_doujun(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
     Chiis = [M || #meld{type=chii} = M <- Melds],
     lists:any(fun(M) -> san_shoku(M, Hand) end, Chiis).
+
+%% @doc Returns true for a San shoku douko hand
+%%      Hand must contain the same triplet in all three suits
+-spec san_shoku_douko(game(), player()) -> boolean().
+san_shoku_douko(#game{}, #player{hand=#hand{melds=Melds}=Hand}) ->
+    Pons = [M || #meld{type=pon} = M <- Melds],
+    lists:any(fun(M) -> san_shoku(M, Hand) end, Pons).
 
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
