@@ -20,6 +20,12 @@
          san_kan_tsu/2,
          toi_toi/2,
          san_an_kou/2,
+         shou_san_gen/2,
+         honrouto/2,
+         honitsu/2,
+         jun_chan/2,
+         ryanpeikou/2,
+         chinitsu/2,
          kokushi_musou/2,
          ryuu_iisou/2,
          dai_san_gen/2]).
@@ -91,8 +97,8 @@ count_unique(L) ->
 -spec iipeikou(game(), player()) -> boolean().
 iipeikou(#game{}, #player{hand=#hand{melds=Melds}}) ->
     Chiis = [M || M = #meld{type=chii} <- Melds],
-    Counts = [C || {_, C} <- count_unique(Chiis)],
-    lists:max(Counts) > 1 andalso lists:max(Counts) < 4.
+    Counts = [C || {_, C} <- count_unique(Chiis), C == 2],
+    length(Counts) == 1.
 
 %% @doc Returns true for a Chanta hand
 %%      All melds and the pair must include a terminal or honor tile
@@ -164,12 +170,66 @@ san_an_kou(#game{}, #player{hand=#hand{melds=Melds}}) ->
                        lists:member(T, [pon,kan])],
     length(ClosedPons) =:= 3.
 
+%% @doc Returns true for a Shou san gen hand
+shou_san_gen(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Pons = [M || M = #meld{type=Type, tiles=[#tile{value=Value}|_]} <- Melds,
+                 lists:member(Type, [pon, kan]),
+                 lists:member(Value, [red, green, white])],
+    Pairs = [M || M = #meld{type=Type, tiles=[#tile{value=Value}|_]} <- Melds,
+                  Type == pair,
+                  lists:member(Value, [red, green, white])],
+    length(Pons) == 2 andalso length(Pairs) == 1.
+
+%% @doc Returns true for a Honrouto hand
+honrouto(#game{}, #player{hand=Hand}) ->
+    IsHonour = fun(T) ->
+                       lists:member(T, ?HONOURS ++ ?TERMINALS)
+               end,
+    lists:all(IsHonour, riichi_hand:tiles(Hand)).
+    
 %% @doc Returns true for a 7-pair hand.
 -spec chiitoitsu(game(), player()) -> boolean().
 chiitoitsu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}})
   when length(Melds) =:= 7 ->
     Pairs = [S || S <- Melds, S#meld.type =:= pair],
     length(Pairs) =:= 7 andalso sets:size(sets:from_list(Pairs)) =:= 7.
+
+%% @doc Returns true for a Honitsu hand.
+honitsu(#game{}, #player{hand=Hand}) ->
+    Tiles = riichi_hand:tiles(Hand),
+    Suits = sets:to_list(sets:from_list([Suit || #tile{suit=Suit} <- Tiles,
+                                                 lists:member(Suit, [pin, sou, man])])),
+    IsHonour = fun(T) ->
+                       lists:member(T, ?HONOURS)
+               end,
+    length(Suits) == 1 andalso lists:any(IsHonour, Tiles).
+
+%% @doc Returns true for a Jun chan hand.
+jun_chan(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    IsTerminal = fun(T) ->
+                         lists:member(T, ?TERMINALS)
+                 end,
+    HasTerminal = fun(#meld{tiles=Tiles}) ->
+                          lists:any(IsTerminal, Tiles)
+                  end,
+    lists:all(HasTerminal, Melds).
+
+%% @doc Returns true for a Ryanpeikou hand.
+ryanpeikou(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Chiis = [M || M = #meld{type=chii} <- Melds],
+    Counts = [C || {_, C} <- count_unique(Chiis), C == 2],
+    length(Counts) == 2.
+
+%% @doc Returns true for a Chinitsu hand.
+chinitsu(#game{}, #player{hand=Hand}) ->
+    Tiles = riichi_hand:tiles(Hand),
+    Suits = sets:to_list(sets:from_list([Suit || #tile{suit=Suit} <- Tiles,
+                                                 lists:member(Suit, [pin, sou, man])])),
+    IsHonour = fun(T) ->
+                       lists:member(T, ?HONOURS)
+               end,
+    length(Suits) == 1 andalso not lists:any(IsHonour, Tiles).
+
 
 %% @doc Returns true for a 13 Orphans hand.
 %%      The hand must contain one each of every terminal and honour tile, plus one
