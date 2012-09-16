@@ -1,6 +1,6 @@
 .PHONY: all deps compile test clean
 
-REBAR=./rebar
+REBAR=rebar
 
 all: deps compile
 
