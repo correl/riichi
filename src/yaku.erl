@@ -256,3 +256,50 @@ ryuu_iisou(#game{}, #player{hand=Hand}) ->
 dai_san_gen(#game{}, #player{hand=#hand{melds=Melds}}) ->
     [green, red, white] =:= lists:usort([V || #meld{type=T, tiles=[#tile{suit=dragon, value=V}|_]} <- Melds,
                                               lists:member(T, [pon, kan])]).
+
+suu_an_kou(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Pons = [M || M = #meld{type=T} <- Melds,
+                 lists:member(T, [pon, kan]),
+                 not riichi:is_open(M)],
+    length(Pons) == 4.
+
+tsu_iisou(#game{}, #player{hand=Hand}) ->
+    IsHonour = fun(T) ->
+                       lists:member(T, ?HONOURS)
+               end,
+    lists:all(IsHonour, riichi_hand:tiles(Hand)).
+
+chinrouto(#game{}, #player{hand=Hand}) ->
+    IsTerminal = fun(T) ->
+                         lists:member(T, ?TERMINALS)
+                 end,
+    lists:all(IsTerminal, riichi_hand:tiles(Hand)).
+
+shou_suushi(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Pons = [M || M = #meld{type=Type, tiles=[#tile{suit=wind}|_]} <- Melds,
+                 lists:member(Type, [pon, kan])],
+    Pairs = [M || M = #meld{type=Type, tiles=[#tile{suit=wind}|_]} <- Melds,
+                  Type == pair],
+    length(Pons) == 2 andalso length(Pairs) == 1.
+
+dai_suushi(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Pons = [M || M = #meld{type=Type, tiles=[#tile{suit=wind}|_]} <- Melds,
+                 lists:member(Type, [pon, kan])],
+    length(Pons) == 3.
+
+chuuren_pooto(#game{} = Game, #player{hand=#hand{melds=Melds} = Hand} = Player) ->
+    Tiles = riichi_hand:tiles(Hand),
+    [#tile{suit=Suit}|_] = Tiles,
+    chinitsu(Game, Player)
+        andalso length([M || M = #meld{type=T, tiles=[#tile{value=1}|_]} <- Melds,
+                             lists:member(T, [pon, kan])]) == 1
+        andalso length([M || M = #meld{type=T, tiles=[#tile{value=9}|_]} <- Melds,
+                             lists:member(T, [pon, kan])]) == 1
+        andalso lists:all(fun(T) ->
+                                  lists:member(T, Tiles)
+                          end,
+                          [#tile{value=Value, suit=Suit} || Value <- lists:seq(2,8)]).
+
+suu_kan_tsu(#game{}, #player{hand=#hand{melds=Melds}}) ->
+    Kans = [M || M = #meld{type=kan} <- Melds],
+    length(Kans) == 4.
