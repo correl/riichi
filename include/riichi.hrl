@@ -47,11 +47,11 @@
 %%     Discards = [tile()]
 %%     Drawn = none | {tsumo | ron, tile()}
 -record(player, {
-          name     :: string(),
-          seat     :: wind(),
-          hand     :: hand(),
-          discards :: [tile()],
-          drawn    :: none | {tsumo | ron, tile()}
+          name         :: string(),
+          seat         :: wind(),
+          hand=#hand{} :: hand(),
+          discards=[]  :: [tile()],
+          drawn=none   :: none | {tsumo | ron, tile()}
 }).
 -type player() :: #player{}.
 
