@@ -9,9 +9,11 @@
 -include("../include/riichi.hrl").
 
 -export([
+         start/0,
          is_valid_tile/1,
          is_open/1,
          dora/1,
+         next/2,
          nearest/2,
          score/3,
          score_hand/1,
@@ -20,6 +22,9 @@
          shuffle/1,
          tiles/0
 ]).
+
+start() ->
+    application:start(riichi).
 
 -spec is_valid_tile(tile()) -> boolean().
 is_valid_tile(#tile{suit=dragon, value=Value}) ->
@@ -45,28 +50,33 @@ is_open(#hand{tiles=Tiles, melds=Melds}) ->
         orelse lists:any(fun is_open/1, Melds).
 
 -spec dora(tile()) -> tile().
-dora(#tile{suit=dragon, value=Value}=Indicator) ->
-    case Value of
-        white -> Indicator#tile{value=green};
-        green -> Indicator#tile{value=red};
-        red   -> Indicator#tile{value=white}
-    end;
-dora(#tile{suit=wind, value=Value}=Indicator) ->
-    case Value of
-        east  -> Indicator#tile{value=south};
-        south -> Indicator#tile{value=west};
-        west  -> Indicator#tile{value=north};
-        north -> Indicator#tile{value=east}
-    end;
-dora(#tile{value=Value}=Indicator) ->
+dora(#tile{suit = Suit, value = Value} = Indicator) ->
     case is_valid_tile(Indicator) of
-        false ->
-            throw({error, invalid_tile});
-        _     ->
-            if
-                Value == 9 -> Indicator#tile{value=1};
-                true       -> Indicator#tile{value=Value + 1}
-            end
+        true ->
+            Next = next(Suit, Value),
+            Indicator#tile{value = Next};
+        _ ->
+            throw({error, invalid_tile})
+    end.
+
+-spec next(suit(), term()) -> term().
+next(dragon, Value) ->
+    case Value of
+        white -> green;
+        green -> red;
+        red -> white
+    end;
+next(wind, Value) ->
+    case Value of
+        east -> south;
+        south -> west;
+        west -> north;
+        north -> east
+    end;
+next(_Suit, Value) when is_integer(Value) ->
+    case Value < 9 of
+        true -> Value + 1;
+        _ -> 1
     end.
 
 -spec nearest(integer(), integer()) -> integer().
