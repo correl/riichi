@@ -106,7 +106,7 @@ iipeikou(#game{}, #player{hand=#hand{melds=Melds}}) ->
 chanta(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
     Sets = [[{T#tile.suit, T#tile.value} || T <- Tiles]
             || #meld{tiles=Tiles} <- Melds],
-    ChantaTiles = [{T#tile.suit, T#tile.value} || T <- (?TERMINALS ++ ?HONOURS)],
+    ChantaTiles = [{T#tile.suit, T#tile.value} || T <- (?T_TERMINALS ++ ?T_HONOURS)],
     lists:all(fun(Tiles) ->
                       (Tiles -- ChantaTiles =/= Tiles)
               end,
@@ -183,7 +183,7 @@ shou_san_gen(#game{}, #player{hand=#hand{melds=Melds}}) ->
 %% @doc Returns true for a Honrouto hand
 honrouto(#game{}, #player{hand=Hand}) ->
     IsHonour = fun(T) ->
-                       lists:member(T, ?HONOURS ++ ?TERMINALS)
+                       lists:member(T, ?T_HONOURS ++ ?T_TERMINALS)
                end,
     lists:all(IsHonour, riichi_hand:tiles(Hand)).
     
@@ -200,14 +200,14 @@ honitsu(#game{}, #player{hand=Hand}) ->
     Suits = sets:to_list(sets:from_list([Suit || #tile{suit=Suit} <- Tiles,
                                                  lists:member(Suit, [pin, sou, man])])),
     IsHonour = fun(T) ->
-                       lists:member(T, ?HONOURS)
+                       lists:member(T, ?T_HONOURS)
                end,
     length(Suits) == 1 andalso lists:any(IsHonour, Tiles).
 
 %% @doc Returns true for a Jun chan hand.
 jun_chan(#game{}, #player{hand=#hand{melds=Melds}}) ->
     IsTerminal = fun(T) ->
-                         lists:member(T, ?TERMINALS)
+                         lists:member(T, ?T_TERMINALS)
                  end,
     HasTerminal = fun(#meld{tiles=Tiles}) ->
                           lists:any(IsTerminal, Tiles)
@@ -226,7 +226,7 @@ chinitsu(#game{}, #player{hand=Hand}) ->
     Suits = sets:to_list(sets:from_list([Suit || #tile{suit=Suit} <- Tiles,
                                                  lists:member(Suit, [pin, sou, man])])),
     IsHonour = fun(T) ->
-                       lists:member(T, ?HONOURS)
+                       lists:member(T, ?T_HONOURS)
                end,
     length(Suits) == 1 andalso not lists:any(IsHonour, Tiles).
 
@@ -265,13 +265,13 @@ suu_an_kou(#game{}, #player{hand=#hand{melds=Melds}}) ->
 
 tsu_iisou(#game{}, #player{hand=Hand}) ->
     IsHonour = fun(T) ->
-                       lists:member(T, ?HONOURS)
+                       lists:member(T, ?T_HONOURS)
                end,
     lists:all(IsHonour, riichi_hand:tiles(Hand)).
 
 chinrouto(#game{}, #player{hand=Hand}) ->
     IsTerminal = fun(T) ->
-                         lists:member(T, ?TERMINALS)
+                         lists:member(T, ?T_TERMINALS)
                  end,
     lists:all(IsTerminal, riichi_hand:tiles(Hand)).
 

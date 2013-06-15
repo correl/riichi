@@ -161,7 +161,7 @@ chinitsu_test() ->
     ?assertEqual(true, yaku:chinitsu(#game{}, #player{hand=Hand, drawn={tsumo, #tile{suit=sou, value=1}}})).
 
 kokushi_musou_test() ->
-    Hand = #hand{tiles=?TERMINALS ++ ?HONOURS -- [#tile{suit=pin, value=1}],
+    Hand = #hand{tiles=?T_TERMINALS ++ ?T_HONOURS -- [#tile{suit=pin, value=1}],
                 melds=[#meld{type=pair, tiles=lists:duplicate(2, #tile{suit=pin, value=1})}]},
     ?assertEqual(true, yaku:kokushi_musou(#game{}, #player{hand=Hand})).
 
