@@ -6,7 +6,7 @@
 
 -module(game).
 
--include("riichi.hrl").
+-include("../include/riichi.hrl").
 
 -export([new/0,
          new/1,
@@ -31,10 +31,10 @@ new() ->
 new(Players) ->
     lists:foldl(fun add_player/2, new(), Players).
 
-add_player(_Player, Game = #game{players=Players})
+add_player(_Player, #game{players=Players})
   when length(Players) >= 4 ->
     throw("Game full");
-add_player(Name, Game = #game{players = Players})
+add_player(Name, Game = #game{})
   when is_list(Name) ->
     add_player(#player{name=Name}, Game);
 add_player(Player = #player{}, Game = #game{players=Players}) ->
@@ -70,7 +70,7 @@ draw(#game{turn = Turn} = Game) ->
     Updated = update_player(Game, Turn, Player),
     Updated#game{wall=Wall}.
 
-get_player(#game{players = Players} = Game, Seat) ->
+get_player(#game{players = Players}, Seat) ->
     Pos = position(Seat) + 1,
     lists:nth(Pos, Players).
 

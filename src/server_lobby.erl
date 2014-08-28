@@ -22,7 +22,7 @@ handle_call(get_players, _From, State) ->
 handle_call(_Msg, _From, State) ->
     {noreply, State}.
 
-handle_cast({send, {message, From, Body}=Message}, State) ->
+handle_cast({send, {message, _From, _Body}=Message}, State) ->
     Players = State#state.players,
     [gen_server:cast(Pid, Message) || Pid <- Players],
     {noreply, State};
