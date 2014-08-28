@@ -28,7 +28,15 @@
          chinitsu/2,
          kokushi_musou/2,
          ryuu_iisou/2,
-         dai_san_gen/2]).
+         dai_san_gen/2,
+         suu_an_kou/2,
+         tsu_iisou/2,
+         chinrouto/2,
+         shou_suushi/2,
+         dai_suushi/2,
+         chuuren_pooto/2,
+         suu_kan_tsu/2
+        ]).
 
 %% @doc Counts the pons/kans of value tiles in a player's hand.
 %%      Value tiles include all of the dragons, plus the round wind and the player's seat wind.
@@ -117,7 +125,7 @@ chanta(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
 -spec itsuu(game(), player()) -> boolean().
 itsuu(#game{}, #player{hand=#hand{tiles=[], melds=Melds}}) ->
     Tiles = lists:flatten([TS || #meld{type=chii, tiles=TS} <- Melds]),
-    Runs = [lists:filter(fun(#tile{suit=S, value=V}) -> S =:= Suit end, Tiles)
+    Runs = [lists:filter(fun(#tile{suit=S}) -> S =:= Suit end, Tiles)
             || Suit <- [man,sou,pin]],
     lists:any(fun(TS) ->
                       sets:from_list([V || #tile{value=V} <- TS]) =:= sets:from_list(lists:seq(1,9))

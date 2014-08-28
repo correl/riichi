@@ -5,7 +5,7 @@
 -export([waiting/3,
          playing/2,
          turn/2]).
--export([init/1, handle_event/3, handle_sync_event/4, handle_info/3, terminate/3]).
+-export([init/1, handle_event/3, handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
 
 -include("../include/riichi.hrl").
 
@@ -68,3 +68,6 @@ terminate(Reason, StateName, _State) ->
                                {from_state, StateName},
                                {reason, Reason}]),
     ok.
+
+code_change(_OldVsn, StateName, State, _Extra) ->
+    {ok, StateName, State}.

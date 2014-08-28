@@ -1,12 +1,10 @@
 -module(game_tree).
 
--include("riichi.hrl").
--include("lazy.hrl").
+-include("../include/riichi.hrl").
+-include("../include/lazy.hrl").
 
 -export([build/1,
          do/2]).
-
--compile([export_all]).
 
 -record(game_tree, {game, actions}).
 -record(game_action, {player, action, arguments}).
