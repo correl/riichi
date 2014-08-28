@@ -1,6 +1,6 @@
 -module(riichi_tests).
 
--include("riichi.hrl").
+-include("../include/riichi.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 valid_tile_dragon_test_() ->
