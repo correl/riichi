@@ -1,7 +1,5 @@
 -module(riichi_yaku_tests).
 
--compile(export_all).
-
 -include("../include/riichi.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
