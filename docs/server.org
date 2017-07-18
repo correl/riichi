@@ -1,0 +1,65 @@
+#+TITLE: Game Server
+#+STARTUP: indent
+* Starting a Game
+#+BEGIN_SRC plantuml :file gameserver.svg
+  actor Client
+  participant Server
+  participant Game
+  participant Lobby
+
+  Client -> Server : {hello, Name}
+  Server --> Lobby : add(Client, Name)
+  Lobby -> Client : {lobby, Name, Members}
+  Client -> Lobby : newGame
+  create Game
+  Lobby --> Game : new(Name)
+  Lobby --> Game : add(Client)
+  Game -> Client : {game, State}
+
+  == Game created, awaiting players ==
+
+  loop 3 times
+    Lobby <-] : join(GameName)
+    Lobby --> Game : add(Client)
+    Game ->] : {game, State}
+    Game -> Client : {game, State}
+  end
+
+  == Game started ==
+
+  Game -> Client : {game, State}
+  Game ->] : {game, State} x 3
+#+END_SRC
+
+#+RESULTS:
+[[file:gameserver.svg]]
+* Player Actions
+
+#+BEGIN_SRC plantuml :file server-actions.svg
+  actor Client
+  participant Server
+
+  == Player action required ==
+
+  Game -> Client : {choose, Actions}
+  group Player Action Validated
+    Client -> Game : {action, Action}
+    Game -> Client : ok
+    Game ->] : {action, Player, Action} x 3
+  else Invalid action
+    Client -> Game : {action, Action}
+    Game -> Client : {error, Msg}
+  else Timeout
+    Game -> Client : {error, timeout}
+    Game ->] : {action, Player, timeout} x 3
+  end
+
+  == Game loop continues ==
+
+  Game -> Client : {game, State}
+  Game ->] : {game, State} x 3
+
+#+END_SRC
+
+#+RESULTS:
+[[file:server-actions.svg]]
