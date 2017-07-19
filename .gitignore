@@ -1,5 +1,2 @@
-*.beam
-*~
-ebin/*
-doc/*
-.eunit/
+_build/
+rebar.lock
