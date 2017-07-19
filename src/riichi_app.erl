@@ -10,6 +10,15 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
+    Dispatch = cowboy_router:compile(
+                 [{'_', [{"/", cowboy_static, {priv_file, riichi, "index.html"}}]}
+                 ]),
+    {ok, _} = cowboy:start_http(
+                my_http_listener,
+                100,
+                [{port, 8080}],
+                [{env, [{dispatch, Dispatch}]}]
+               ),
     riichi_sup:start_link().
 
 stop(_State) ->
