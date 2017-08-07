@@ -1,10 +1,17 @@
 module Riichi exposing (..)
 
+import Hand
 import Html exposing (..)
+import Html.CssHelpers
+import Stylesheets as S
+
+
+{ id, class, classList } =
+    Html.CssHelpers.withNamespace "riichi"
 
 
 type alias Model =
-    {}
+    { hand : Hand.Model }
 
 
 type Msg
@@ -13,7 +20,24 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { hand =
+            Hand.fromJSON
+                { tiles =
+                    [ "4 pin"
+                    , "5 pin"
+                    , "6 pin"
+                    , "4 sou"
+                    , "5 sou"
+                    , "6 sou"
+                    , "4 man"
+                    , "5 man"
+                    , "6 man"
+                    , "red dragon"
+                    ]
+                }
+      }
+    , Cmd.none
+    )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -33,5 +57,7 @@ main =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ h1 [] [ text "Riichi Mahjong" ] ]
+    div [ class [ S.Tileset S.White ] ]
+        [ h1 [] [ text "Riichi Mahjong" ]
+        , Hand.view model.hand
+        ]
