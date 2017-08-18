@@ -63,5 +63,9 @@ do(Tree, Action) ->
         undefined ->
             error(invalid_game_action);
         Thunk ->
-            ?FORCE(Thunk)
+            case Action of
+                tsumo -> {win, tsumo, Tree#game_tree.game};
+                ron -> {win, ron, Tree#game_tree.game};
+                _ -> ?FORCE(Thunk)
+            end
     end.
