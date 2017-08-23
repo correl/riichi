@@ -1,6 +1,6 @@
 module Riichi exposing (..)
 
-import Hand
+import Client
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -14,32 +14,19 @@ import Stylesheets as S
 
 type alias Model =
     { tileset : S.Tileset
-    , hand : Hand.Model
+    , client : Client.Model
     }
 
 
 type Msg
     = SetTileset S.Tileset
+    | ClientMsg Client.Msg
 
 
 init : ( Model, Cmd Msg )
 init =
     ( { tileset = S.White
-      , hand =
-            Hand.fromJSON
-                { tiles =
-                    [ "4 pin"
-                    , "5 pin"
-                    , "6 pin"
-                    , "4 sou"
-                    , "5 sou"
-                    , "6 sou"
-                    , "4 man"
-                    , "5 man"
-                    , "6 man"
-                    , "red dragon"
-                    ]
-                }
+      , client = Client.init
       }
     , Cmd.none
     )
@@ -53,6 +40,15 @@ update msg model =
             , Cmd.none
             )
 
+        ClientMsg m ->
+            let
+                ( client, effects ) =
+                    Client.update m model.client
+            in
+                ( { model | client = client }
+                , Cmd.map ClientMsg effects
+                )
+
 
 main : Program Never Model Msg
 main =
@@ -60,8 +56,13 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch [ Sub.map ClientMsg <| Client.subscriptions model.client ]
 
 
 view : Model -> Html Msg
@@ -73,7 +74,7 @@ view model =
             , radio "tileset" "White" (SetTileset S.White) (model.tileset == S.White)
             , radio "tileset" "Black" (SetTileset S.Black) (model.tileset == S.Black)
             ]
-        , Hand.view model.hand
+        , Client.view model.client
         ]
 
 
