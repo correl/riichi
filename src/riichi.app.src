@@ -6,7 +6,9 @@
   {applications, [
                   kernel,
                   stdlib,
-                  cowboy
+                  lager,
+                  cowboy,
+                  jsx
                  ]},
   {modules, []},
   {mod, { riichi_app, []}},

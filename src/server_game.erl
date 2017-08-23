@@ -2,7 +2,7 @@
 -behaviour(gen_fsm).
 
 -export([start_link/0]).
--export([waiting/3,
+-export([waiting/2,
          playing/2,
          turn/2]).
 -export([init/1, handle_event/3, handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
@@ -17,16 +17,19 @@ start_link() ->
 init([]) ->
     {ok, waiting, #state{}}.
 
-waiting({add_player, Player}, _From, State) ->
+waiting({add_player, Player}, State) ->
     error_logger:info_report({adding_player, [{player, Player}]}),
     Players = [Player|State#state.players],
+    [player:send(P, {joined, Player}) || P <- Players],
     case length(Players) of
         4 ->
             Game = game:new(Players),
             error_logger:info_report({starting_game, []}),
+            [player:send(P, {log ,<<"starting game">>}) || P <- Players],
             gen_fsm:send_event(self(), game_tree:build(Game)),
-            {reply, ok, playing, Game};
-        _ -> {reply, ok, waiting, State#state{players=Players}}
+            {next_state, playing, Game};
+        _ ->
+            {next_state, waiting, State#state{players=Players}}
     end.
 
 playing({game_tree, Game, Branches} = Tree, State) ->
@@ -40,7 +43,7 @@ playing({game_tree, Game, Branches} = Tree, State) ->
                                                      [] ->
                                                          [];
                                                      _ ->
-                                                         [gen_server:call(Player#player.pid, {choose, PlayerActions})]
+                                                         [gen_server:call(Player#player.pid, {choose, PlayerActions}, infinity)]
                                                  end
                                          end,
                                          [east, south, west, north])),

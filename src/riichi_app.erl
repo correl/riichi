@@ -14,7 +14,8 @@ start(_StartType, _StartArgs) ->
                  [{'_', [{"/", cowboy_static, {priv_file, riichi, "index.html"}},
                          {"/js/[...]", cowboy_static, {priv_dir, riichi, "js"}},
                          {"/css/[...]", cowboy_static, {priv_dir, riichi, "css"}},
-                         {"/images/[...]", cowboy_static, {priv_dir, riichi, "images"}}
+                         {"/images/[...]", cowboy_static, {priv_dir, riichi, "images"}},
+                         {"/websocket", server_websocket, []}
                         ]}
                  ]),
     {ok, _} = cowboy:start_http(
