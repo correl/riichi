@@ -151,7 +151,7 @@ cssName tile =
             String.concat [ "Sou", (toString v) ]
 
         Suited Man v ->
-            String.concat [ "Wan", (toString v) ]
+            String.concat [ "Man", (toString v) ]
 
 
 view : Tile -> Html a
