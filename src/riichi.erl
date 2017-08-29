@@ -169,7 +169,7 @@ find_sets(Tiles) ->
 
 -spec shuffle(list()) -> list().
 shuffle(List) ->
-    [X || {_, X} <- lists:sort([{random:uniform(), I} || I <- List])].
+    [X || {_, X} <- lists:sort([{rand:uniform(), I} || I <- List])].
 
 -spec tiles() -> [string()].
 tiles() ->
