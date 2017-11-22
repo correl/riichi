@@ -15,6 +15,7 @@ init([Name]) ->
 
 handle_call({choose, Actions}, _From, State) ->
     [Action|_] = sort_actions(Actions),
+    timer:sleep(300),
     {reply, Action, State};
 
 handle_call(get_name, _From, State) ->
