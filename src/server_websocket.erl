@@ -41,7 +41,6 @@ websocket_info({timeout, _Ref, Msg}, Req, State) ->
     {reply, {text, Msg}, Req, State};
 
 websocket_info(Info, Req, State) ->
-    lager:info("websocket info: ~p", [Info]),
     case encode(Info) of
         {ok, Msg} ->
             {reply, {text, Msg}, Req, State};
@@ -60,6 +59,8 @@ encode({log, Msg}) ->
     {ok, io_lib:format("log: ~s", [Msg])};
 encode({new_state, Game}) ->
     {ok, ["new_state: ", jsx:encode(encode_game(Game))]};
+encode({choose, Actions}) ->
+    {ok, ["choose: ", jsx:encode(lists:map(fun encode_action/1, Actions))]};
 encode(_) ->
     {error, invalid_message}.
 
@@ -89,3 +90,12 @@ encode_hand(Hand) ->
 encode_meld(Meld) ->
     #{type => Meld#meld.type,
       tiles => lists:map(fun encode_tile/1, Meld#meld.tiles)}.
+
+encode_action(Action)->
+    #{action => game_action:action(Action),
+      arguments => case game_action:action(Action) of
+                       discard ->
+                           [encode_tile(game_action:arguments(Action))];
+                       _ ->
+                           undefined
+                   end}.

@@ -14,6 +14,8 @@ init([Socket]) ->
     Socket ! <<"oh hello!">>,
     {ok, #state{socket=Socket}}.
 
+handle_call({choose, [Action]}, _From, State) ->
+    {reply, Action, State};
 handle_call({choose, Actions}, _From, State) ->
     %% [Action|_] = sort_actions(Actions),
     %% {reply, Action, State};

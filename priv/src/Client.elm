@@ -72,6 +72,9 @@ socketMsg message =
                         |> Result.toMaybe
                         |> Maybe.map NewState
 
+                "choose" ->
+                    Just (Log rest)
+
                 _ ->
                     Nothing
     in
