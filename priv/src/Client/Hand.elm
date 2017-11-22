@@ -1,7 +1,7 @@
 module Client.Hand exposing (..)
 
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, classList)
 import Tile exposing (Tile)
 
 
@@ -10,9 +10,15 @@ type alias Hand =
     }
 
 
-view : Hand -> Html a
-view model =
+view : Hand -> Bool -> Html a
+view model open =
     div [ class "hand" ]
-        [ div [ class "tiles open" ] <|
-            List.map Tile.view model.tiles
+        [ div
+            [ class "tiles" ]
+          <|
+            case open of
+                True ->
+                    List.map Tile.view model.tiles
+                False ->
+                    List.map Tile.viewHidden model.tiles
         ]

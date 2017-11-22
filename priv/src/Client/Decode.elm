@@ -2,7 +2,7 @@ module Client.Decode exposing (..)
 
 import Client.Hand exposing (Hand)
 import Client.Game exposing (Game)
-import Client.Player exposing (Player)
+import Client.Player exposing (Player, Wind(..))
 import Json.Decode exposing (..)
 import Json.Decode.Extra exposing (fromResult)
 import Tile exposing (Tile)
@@ -36,10 +36,23 @@ hand =
         (field "tiles" (list tile))
 
 
+wind : Decoder Wind
+wind =
+    let
+        toWind s = case s of
+                       "east" -> East
+                       "west" -> West
+                       "south" -> South
+                       _ -> North
+    in
+        string |> map toWind
+            
 player : Decoder Player
 player =
-    map2 Player
+    map4 Player
+        (field "name" <| map (\s -> s == "Websocket") string)
         (field "name" string)
+        (field "seat" wind)
         (field "hand" hand)
 
 

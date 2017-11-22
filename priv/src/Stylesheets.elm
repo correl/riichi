@@ -79,6 +79,7 @@ tiles =
           , "Nan"
           , "Shaa"
           , "Pei"
+          , "Back"
           ]
         , List.range 1 9 |> List.map toString |> List.map (String.append "Pin")
         , List.range 1 9 |> List.map toString |> List.map (String.append "Sou")

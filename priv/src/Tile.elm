@@ -157,3 +157,7 @@ cssName tile =
 view : Tile -> Html a
 view tile =
     span [ class [ (S.Tile (cssName tile)) ] ] [ span [] [] ]
+
+viewHidden : Tile -> Html a
+viewHidden _ =
+    span [ class [ (S.Tile "Back") ] ] [ span [] []]

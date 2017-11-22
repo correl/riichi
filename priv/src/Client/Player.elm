@@ -3,9 +3,12 @@ module Client.Player exposing (..)
 import Client.Hand exposing (Hand)
 import Html exposing (..)
 
+type Wind = East | South | West | North
 
 type alias Player =
-    { name : String
+    { isMe : Bool
+    , name : String
+    , seat : Wind
     , hand : Hand
     }
 
@@ -13,6 +16,6 @@ type alias Player =
 view : Player -> Html msg
 view player =
     fieldset []
-        [ legend [] [ text ("Player: " ++ player.name) ]
-        , Client.Hand.view player.hand
+        [ legend [] [ text ("Player: " ++ player.name ++ "(" ++ (toString player.seat) ++ ")") ]
+        , Client.Hand.view player.hand player.isMe
         ]
