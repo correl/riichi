@@ -49,11 +49,12 @@ wind =
             
 player : Decoder Player
 player =
-    map4 Player
+    map5 Player
         (field "name" <| map (\s -> s == "Websocket") string)
         (field "name" string)
         (field "seat" wind)
         (field "hand" hand)
+        (field "discards" (list tile))
 
 
 game : Decoder Game

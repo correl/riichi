@@ -55,7 +55,7 @@ socketMsg : String -> Maybe Msg
 socketMsg message =
     let
         splitMsg =
-            case String.split ":" message of
+            case String.split ":" (Debug.log "message" message) of
                 msgType :: rest ->
                     Just ( msgType, String.join ":" rest )
 
