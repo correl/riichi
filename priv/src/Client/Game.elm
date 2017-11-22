@@ -5,12 +5,17 @@ import Html exposing (..)
 
 
 type alias Game =
-    { players : List Player }
+    { players : List Player
+    , wall : Int
+    }
 
 
 view : Game -> Html msg
 view game =
-    div [] <|
-        List.map
-            Client.Player.view
-            game.players
+    div []
+        [ div [] [ text (toString game.wall) ]
+        , div [] <|
+            List.map
+                Client.Player.view
+                game.players
+        ]

@@ -59,5 +59,6 @@ player =
 
 game : Decoder Game
 game =
-    map Game
+    map2 Game
         (field "players" (list player))
+        (field "wall" int)
