@@ -2,6 +2,7 @@ module Client.Decode exposing (..)
 
 import Client.Hand exposing (Hand)
 import Client.Game exposing (Game)
+import Client.Action exposing (Action)
 import Client.Player exposing (Player, Wind(..))
 import Json.Decode exposing (..)
 import Json.Decode.Extra exposing (fromResult)
@@ -39,14 +40,23 @@ hand =
 wind : Decoder Wind
 wind =
     let
-        toWind s = case s of
-                       "east" -> East
-                       "west" -> West
-                       "south" -> South
-                       _ -> North
+        toWind s =
+            case s of
+                "east" ->
+                    East
+
+                "west" ->
+                    West
+
+                "south" ->
+                    South
+
+                _ ->
+                    North
     in
         string |> map toWind
-            
+
+
 player : Decoder Player
 player =
     map5 Player
@@ -62,3 +72,26 @@ game =
     map2 Game
         (field "players" (list player))
         (field "wall" int)
+
+
+action : Decoder Action
+action =
+    let
+        discard =
+            map Client.Action.Discard (field "arguments" (index 0 tile))
+    in
+        field "action" string
+            |> andThen
+                (\action ->
+                    case action of
+                        "discard" ->
+                            discard
+
+                        _ ->
+                            fail "Invalid action"
+                )
+
+
+choice : Decoder (List Action)
+choice =
+    list action

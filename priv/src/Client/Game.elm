@@ -9,7 +9,6 @@ type alias Game =
     , wall : Int
     }
 
-
 view : Game -> Html msg
 view game =
     div []

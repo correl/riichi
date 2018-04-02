@@ -3,6 +3,7 @@ module Client exposing (..)
 import Debug
 import Client.Decode
 import Client.Game exposing (Game)
+import Client.Action exposing (Action)
 import Html exposing (..)
 import Json.Decode exposing (decodeString)
 import String
@@ -11,6 +12,7 @@ import WebSocket
 
 type alias Model =
     { game : Maybe Game
+    , choice : Maybe (List Action)
     , log : List String
     }
 
@@ -19,12 +21,14 @@ type Msg
     = Receive String
     | Send String
     | Log String
+    | Choice (List Action)
     | NewState Game
 
 
 init : Model
 init =
     { game = Nothing
+    , choice = Nothing
     , log = []
     }
 
@@ -44,6 +48,11 @@ update msg model =
 
         NewState game ->
             ( { model | game = Just (Debug.log "game" game) }
+            , Cmd.none
+            )
+
+        Choice choice ->
+            ( { model | choice = Just (Debug.log "choice" choice) }
             , Cmd.none
             )
 
@@ -73,7 +82,9 @@ socketMsg message =
                         |> Maybe.map NewState
 
                 "choose" ->
-                    Just (Log rest)
+                    decodeString Client.Decode.choice rest
+                        |> Result.toMaybe
+                        |> Maybe.map Choice
 
                 _ ->
                     Nothing
@@ -91,6 +102,8 @@ view : Model -> Html msg
 view model =
     div []
         [ Maybe.map Client.Game.view model.game
+            |> Maybe.withDefault (div [] [])
+        , Maybe.map Client.Action.viewChoice model.choice
             |> Maybe.withDefault (div [] [])
         , pre [] [ text <| String.join "\n" model.log ]
         ]
