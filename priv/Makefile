@@ -1,12 +1,19 @@
 .PHONY: all node-deps clean run
 
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
+
 TARGET = js/riichi.js
 SOURCE = src/Riichi.elm
 CSS = css/riichi.css
 CSS_SOURCE = src/Stylesheets.elm
 
 ELM_FILES = $(shell find . -type f -name '*.elm')
-PATH := ./node_modules/.bin:$(PATH)
+NODE_PATH := $(abspath ./node_modules/.bin)
+ELM-MAKE := $(NODE_PATH)/elm-make
+ELM-REACTOR := $(NODE_PATH)/elm-reactor
+ELM-TEST := $(NODE_PATH)/elm-test
+ELM-CSS := $(NODE_PATH)/elm-css
 
 ELMMAKE_FLAGS = --yes --warn
 
@@ -20,18 +27,22 @@ node-deps:
 	npm i
 
 $(TARGET): $(ELM_FILES)
-	elm-make $(ELMMAKE_FLAGS) src/Riichi.elm --output=$@
+	$(ELM-MAKE) $(ELMMAKE_FLAGS) src/Riichi.elm --output=$@
 
 $(CSS): $(CSS_SOURCE)
-	elm-css $(CSS_SOURCE) -o css
+	@PATH=$(NODE_PATH):$(PATH) $(ELM-CSS) $(CSS_SOURCE) -o css
 
 clean-deps:
 	rm -rf elm-stuff
 	rm -rf node_modules
+
+test:
+	@PATH=$(NODE_PATH):$(PATH) $(ELM-TEST)
 
 clean:
 	rm -f $(TARGET) $(CSS)
 	rm -rf elm-stuff/build-artifacts
 
 run: all
-	elm-reactor
+	$(ELM-REACTOR)
+
