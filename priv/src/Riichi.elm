@@ -17,16 +17,19 @@ type alias Model =
     , client : Client.Model
     }
 
+type alias Flags =
+    { websocket : String }
+
 
 type Msg
     = SetTileset S.Tileset
     | ClientMsg Client.Msg
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     ( { tileset = S.White
-      , client = Client.init
+      , client = Client.init flags.websocket
       }
     , Cmd.none
     )
@@ -50,9 +53,9 @@ update msg model =
                 )
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    program
+    programWithFlags
         { init = init
         , update = update
         , view = view

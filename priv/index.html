@@ -7,6 +7,10 @@
         <link rel="stylesheet" href="/css/riichi.css" />
     </head>
     <body>
-        <script type="text/javascript">Elm.Riichi.fullscreen()</script>
+        <script type="text/javascript">
+            Elm.Riichi.fullscreen({
+                "websocket": "ws://" + window.location.host + "/websocket"
+            })
+        </script>
     </body>
 </html>

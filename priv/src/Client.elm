@@ -11,7 +11,8 @@ import WebSocket
 
 
 type alias Model =
-    { game : Maybe Game
+    { url : String
+    , game : Maybe Game
     , choice : Maybe (List Action)
     , log : List String
     }
@@ -25,9 +26,10 @@ type Msg
     | NewState Game
 
 
-init : Model
-init =
-    { game = Nothing
+init : String -> Model
+init url =
+    { url = url
+    , game = Nothing
     , choice = Nothing
     , log = []
     }
@@ -95,7 +97,7 @@ socketMsg message =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    WebSocket.listen "ws://localhost:8080/websocket" Receive
+    WebSocket.listen model.url Receive
 
 
 view : Model -> Html msg
