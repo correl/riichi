@@ -1,0 +1,5 @@
+_build/
+priv/riichi.js
+priv/riichi.css
+priv/elm-stuff/
+priv/node_modules/
